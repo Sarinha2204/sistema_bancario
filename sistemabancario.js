@@ -1,26 +1,27 @@
-/* ==========================
-   CLASSES (POO)
-========================== */
+/*1. CLASSES DO SISTEMA BANCÁRIO
+   São estruturas que definem como o sistema funciona */
 
+// BancoCentral controla transações grandes (auditoria)
 class BancoCentral {
   constructor(limite = 1000) {
     this.limite = limite;
     this.transacoesGrandes = [];
   }
 
-  auditar(transacao) {
-    if (transacao.valor > this.limite) {
-      this.transacoesGrandes.push(transacao);
-      return true;
-    }
+  // Guarda transações acima do limite (é chamado ao transferir)
+  auditar(t) {
+    if (t.valor > this.limite) this.transacoesGrandes.push(t);
     return true;
   }
 
+  // Retorna todas as transações auditadas
   listarTransacoesGrandes() {
     return this.transacoesGrandes;
   }
 }
 
+
+// Conta representa cada cliente do banco
 class Conta {
   constructor(titular, cpf, senha, saldoInicial = 0) {
     this.titular = titular;
@@ -30,229 +31,213 @@ class Conta {
     this.historico = [];
   }
 
+  // Armazena operações realizadas (dep, saque, transf)
   registrar(tipo, valor, detalhes = "") {
     this.historico.push({
-      tipo,
-      valor,
-      detalhes,
+      tipo, valor, detalhes,
       data: new Date().toLocaleString()
     });
   }
 
-  depositar(valor) {
-    if (valor <= 0) throw new Error("Depósito inválido.");
-    this.saldo += valor;
-    this.registrar("Depósito", valor);
+  // Depósito (chamado ao clicar no botão "Depositar")
+  depositar(v){
+    if(v<=0) throw new Error("Valor inválido");
+    this.saldo += v;
+    this.registrar("Depósito", v);
   }
 
-  sacar(valor) {
-    if (valor <= 0) throw new Error("Saque inválido.");
-    if (valor > this.saldo) throw new Error("Saldo insuficiente.");
-    this.saldo -= valor;
-    this.registrar("Saque", valor);
+  // Saque (chamado ao clicar no botão "Sacar")
+  sacar(v){
+    if(v<=0) throw new Error("Valor inválido");
+    if(v>this.saldo) throw new Error("Saldo insuficiente");
+    this.saldo -= v;
+    this.registrar("Saque", v);
   }
 }
 
+
+// Banco gerencia contas, login e transferências
 class Banco {
-  constructor(nome, bancoCentral) {
+  constructor(nome, bc){
     this.nome = nome;
-    this.bancoCentral = bancoCentral;
+    this.bc = bc; // ligação com Banco Central
     this.contas = [];
   }
 
-  criarConta(titular, cpf, senha, saldoInicial = 0) {
-    const conta = new Conta(titular, cpf, senha, saldoInicial);
+  // Cria conta (usado no início do sistema)
+  criarConta(t,c,s,si=0){
+    const conta = new Conta(t,c,s,si);
     this.contas.push(conta);
     return conta;
   }
 
-  buscarContaPorCPF(cpf) {
-    return this.contas.find(c => c.cpf === cpf);
+  // Busca conta pelo CPF
+  buscar(cpf){
+    return this.contas.find(x=>x.cpf===cpf);
   }
 
-  autenticar(cpf, senha) {
-    const conta = this.buscarContaPorCPF(cpf);
-    if (!conta) return null;
-    if (conta.senha !== senha) return null;
-    return conta;
+  // Autenticação (usado ao clicar em "Entrar")
+  autenticar(cpf,senha){
+    const c = this.buscar(cpf);
+    if(!c || c.senha!==senha) return null;
+    return c;
   }
 
-  transferir(contaOrigem, contaDestino, valor) {
-    if (!contaDestino) throw new Error("Conta destino não encontrada.");
-    if (valor <= 0) throw new Error("Valor inválido.");
+  // Transferência entre duas contas
+  transferir(origem,destino,valor){
+    if(!destino) throw new Error("Conta destino inexistente.");
 
-    const transacao = {
-      de: contaOrigem.cpf,
-      para: contaDestino.cpf,
-      valor,
-      data: new Date().toISOString(),
-      banco: this.nome
-    };
+    // Auditoria do Banco Central
+    const trans = { de: origem.cpf, para: destino.cpf, valor, data: new Date().toISOString() };
+    this.bc.auditar(trans);
 
-    const ok = this.bancoCentral.auditar(transacao);
-    if (!ok) throw new Error("Transação bloqueada pelo Banco Central.");
+    // Ações nas contas
+    origem.sacar(valor);
+    destino.depositar(valor);
 
-    contaOrigem.sacar(valor);
-    contaDestino.depositar(valor);
-
-    contaOrigem.registrar("Transferência enviada", valor, `Para CPF ${contaDestino.cpf}`);
-    contaDestino.registrar("Transferência recebida", valor, `De CPF ${contaOrigem.cpf}`);
-
-    return transacao;
+    // Registrar histórico
+    origem.registrar("Transferência enviada", valor, `Para ${destino.cpf}`);
+    destino.registrar("Transferência recebida", valor, `De ${origem.cpf}`);
   }
 }
 
-/* ==========================
-   BRADESCO (instância)
-========================== */
+
+
+/*2. INSTÂNCIAS — criação do banco e contas iniciais*/
 
 const bc = new BancoCentral(1000);
-const bradesco = new Banco("Bradesco", bc);
+const banco = new Banco("Bradesco", bc);
 
-// Contas fake
-bradesco.criarConta("Sara Mendes", "07810178156", "123", 2000);
-bradesco.criarConta("Luiz Dias", "08090499104", "123", 1500);
+// Contas cadastradas de exemplo (existem no sistema ao iniciar)
+banco.criarConta("Sara Mendes", "07810178156", "123", 4000);
+banco.criarConta("Luiz Dias", "08090499104", "123", 1500);
 
-let contaLogada = null;
+let conta = null; // guarda a conta logada
 
-/* ==========================
-   DOM
-========================== */
 
-const telaLogin = document.querySelector("#tela-login");
-const telaSistema = document.querySelector("#tela-sistema");
 
-const inputCpf = document.querySelector("#login-cpf");
-const inputSenha = document.querySelector("#login-senha");
-const btnLogin = document.querySelector("#btn-login");
-const loginErro = document.querySelector("#login-erro");
+/* 3. CONEXÃO COM O DOM — elementos da interface*/
 
-const nomeUsuario = document.querySelector("#nome-usuario");
-const saldoAtual = document.querySelector("#saldo-atual");
-
-const valorDeposito = document.querySelector("#valor-deposito");
-const valorSaque = document.querySelector("#valor-saque");
-const cpfDestino = document.querySelector("#cpf-destino");
-const valorTransferencia = document.querySelector("#valor-transferencia");
-
-const btnDepositar = document.querySelector("#btn-depositar");
-const btnSacar = document.querySelector("#btn-sacar");
-const btnTransferir = document.querySelector("#btn-transferir");
-const btnLogout = document.querySelector("#btn-logout");
-
+const saldo = document.querySelector("#saldo-atual");
+const nome = document.querySelector("#nome-usuario");
 const listaTransacoes = document.querySelector("#lista-transacoes");
 const listaAuditoria = document.querySelector("#lista-auditoria");
+const btnLogout = document.querySelector("#btn-logout");
 
-function mostrarErro(msg) {
-  loginErro.textContent = msg;
-  loginErro.classList.remove("d-none");
-}
-function esconderErro() {
-  loginErro.classList.add("d-none");
-}
 
-function atualizarTela() {
-  if (!contaLogada) return;
 
-  nomeUsuario.textContent = contaLogada.titular;
-  saldoAtual.textContent = contaLogada.saldo.toFixed(2);
+/* 4. FUNÇÃO PARA ATUALIZAR A INTERFACE
+   Chamado após login, depósito, saque e transferência*/
 
-  // Histórico
+function atualizar(){
+  if(!conta) return;
+
+  nome.textContent = conta.titular;
+  saldo.textContent = conta.saldo.toFixed(2);
+
+  // Atualiza lista de transações da conta
   listaTransacoes.innerHTML = "";
-  contaLogada.historico.slice().reverse().forEach(t => {
-    const li = document.createElement("li");
-    li.className = "list-group-item";
-    li.innerHTML = `
-      <strong>${t.tipo}</strong> - R$ ${t.valor.toFixed(2)}
-      <br><small>${t.detalhes || ""} | ${t.data}</small>
-    `;
-    listaTransacoes.appendChild(li);
+  conta.historico.slice().reverse().forEach(t=>{
+    listaTransacoes.innerHTML += `
+    <li class="list-group-item">
+      <strong>${t.tipo}</strong> - R$ ${t.valor.toFixed(2)}<br>
+      <small>${t.detalhes} | ${t.data}</small>
+    </li>`;
   });
 
-  // Auditoria BC
+  // Atualiza lista de operações auditadas pelo Banco Central
   listaAuditoria.innerHTML = "";
-  bc.listarTransacoesGrandes().slice().reverse().forEach(a => {
-    const li = document.createElement("li");
-    li.className = "list-group-item text-danger";
-    li.innerHTML = `
-      De <strong>${a.de}</strong> para <strong>${a.para}</strong>
-      - R$ ${a.valor.toFixed(2)}
-      <br><small>${new Date(a.data).toLocaleString()}</small>
-    `;
-    listaAuditoria.appendChild(li);
+  bc.listarTransacoesGrandes().slice().reverse().forEach(t=>{
+    listaAuditoria.innerHTML += `
+    <li class="list-group-item audit-item">
+      De ${t.de} para ${t.para} — R$ ${t.valor}<br>
+      <small>${new Date(t.data).toLocaleString()}</small>
+    </li>`;
   });
 }
 
-/* ==========================
-   EVENTOS
-========================== */
 
-// Login
-btnLogin.addEventListener("click", () => {
-  const cpf = inputCpf.value.trim();
-  const senha = inputSenha.value.trim();
 
-  const conta = bradesco.autenticar(cpf, senha);
-  if (!conta) {
-    mostrarErro("CPF ou senha inválidos.");
+/* 5. EVENTOS — ações ativadas pelos botões*/
+
+
+// LOGIN — dispara quando usuário clica em "Entrar"
+
+document.querySelector("#btn-login").addEventListener("click", ()=>{
+  const cpf = document.querySelector("#login-cpf").value.trim();
+  const senha = document.querySelector("#login-senha").value.trim();
+
+  const c = banco.autenticar(cpf, senha);
+
+  if(!c){
+    document.querySelector("#login-erro").textContent = "CPF ou senha incorretos.";
+    document.querySelector("#login-erro").classList.remove("d-none");
     return;
   }
 
-  esconderErro();
-  contaLogada = conta;
-
-  telaLogin.classList.add("d-none");
-  telaSistema.classList.remove("d-none");
-
-  atualizarTela();
+  conta = c; // define conta logada
+  document.querySelector("#loginModal").style.display = "none"; // esconde modal
+  atualizar(); // atualiza dashboard
 });
 
-// Logout
+
+
+
+//  DEPÓSITO — botão "Depositar"
+
+document.querySelector("#btn-depositar").addEventListener("click", ()=>{
+  try{
+    conta.depositar(Number(document.querySelector("#valor-deposito").value));
+    document.querySelector("#valor-deposito").value = "";
+    atualizar();
+  }catch(e){ alert(e.message); }
+});
+
+
+
+
+// SAQUE — botão "Sacar"
+
+document.querySelector("#btn-sacar").addEventListener("click", ()=>{
+  try{
+    conta.sacar(Number(document.querySelector("#valor-saque").value));
+    document.querySelector("#valor-saque").value = "";
+    atualizar();
+  }catch(e){ alert(e.message); }
+});
+
+
+
+
+//  LOGOUT — botão "Sair"
+
+
 btnLogout.addEventListener("click", () => {
-  contaLogada = null;
-  telaSistema.classList.add("d-none");
-  telaLogin.classList.remove("d-none");
-  inputCpf.value = "";
-  inputSenha.value = "";
+  conta = null; // remove conta logada
+
+  // mostra modal de login novamente
+  const modal = document.querySelector("#loginModal");
+  modal.style.display = "block";
+
+  // limpa campos do modal
+  document.querySelector("#login-cpf").value = "";
+  document.querySelector("#login-senha").value = "";
 });
 
-// Depósito
-btnDepositar.addEventListener("click", () => {
-  try {
-    const valor = Number(valorDeposito.value);
-    contaLogada.depositar(valor);
-    valorDeposito.value = "";
-    atualizarTela();
-  } catch (e) {
-    alert(e.message);
-  }
-});
 
-// Saque
-btnSacar.addEventListener("click", () => {
-  try {
-    const valor = Number(valorSaque.value);
-    contaLogada.sacar(valor);
-    valorSaque.value = "";
-    atualizarTela();
-  } catch (e) {
-    alert(e.message);
-  }
-});
 
-// Transferência
-btnTransferir.addEventListener("click", () => {
-  try {
-    const destinoCpf = cpfDestino.value.trim();
-    const valor = Number(valorTransferencia.value);
 
-    const contaDestino = bradesco.buscarContaPorCPF(destinoCpf);
-    bradesco.transferir(contaLogada, contaDestino, valor);
+// TRANSFERÊNCIA — botão "Transferir"
 
-    cpfDestino.value = "";
-    valorTransferencia.value = "";
-    atualizarTela();
-  } catch (e) {
-    alert(e.message);
-  }
+document.querySelector("#btn-transferir").addEventListener("click", ()=>{
+  try{
+    const dest = banco.buscar(document.querySelector("#cpf-destino").value.trim());
+    banco.transferir(conta, dest, Number(document.querySelector("#valor-transferencia").value));
+
+    // limpa campos
+    document.querySelector("#cpf-destino").value = "";
+    document.querySelector("#valor-transferencia").value = "";
+
+    atualizar();
+  }catch(e){ alert(e.message); }
 });

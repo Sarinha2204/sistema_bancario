@@ -1,195 +1,228 @@
+/* VARIÁVEIS DE CORES (usadas em todo o projeto)
+   Utilize estas variáveis quando quiser manter o padrão
+   visual do banco sem repetir códigos de cor.*/
 :root{
-  --br-red: #cc092f;
-  --br-red-dark: #a70726;
-  --br-red-soft: rgba(204, 9, 47, 0.12);
-  --br-gray: #f3f4f6;
-  --br-text: #111827;
-  --br-muted: #6b7280;
-  --radius: 18px;
+  --br-red: #cc092f;                 /* Vermelho principal do Bradesco */
+  --br-red-soft: rgba(204, 9, 47, .15); /* Vermelho suave para efeitos */
 }
 
-/* ====== Fundo geral elegante ====== */
-.body{
-  background-color: grey;
-  color: var(--br-text);
-  min-height: 100vh;
+
+
+/* ESTILO GLOBAL DO SITE
+   Define fundo, altura mínima da página e fonte geral.
+   Esses estilos valem para todo o corpo da página.*/
+body{
+  background: linear-gradient(135deg, #ffffff, #f1f3f6);  /* Fundo em degradê */
+  min-height: 100vh;                                     /* Tela sempre cheia */
+  font-family: "Inter", sans-serif;                      /* Fonte moderna */
 }
 
-/* ====== Topbar Bradesco ====== */
+
+
+/*TOPBAR (barra superior fixa)
+   Usada no topo da página para exibir a marca e o botão
+   de logout. Como é flex, os itens podem ser alinhados.*/
 .navbar-bradesco{
-  background: linear-gradient(90deg, var(--br-red) 0%, #e0003a 100%);
-  height: 68px;
-  display: flex;
-  align-items: center;
-  box-shadow: 0 6px 18px rgba(0,0,0,.18);
-  z-index: 10;
-  backdrop-filter: blur(6px);
+  height: 70px;
+  background: linear-gradient(90deg, var(--br-red), #e0003a);
+  display:flex;                      /* Permite alinhar conteúdo */
+  align-items:center;                /* Alinha verticalmente */
+  padding:0 20px;
+  box-shadow:0 3px 12px rgba(0,0,0,.2);
 }
 
-.logo-bradesco{
-  height: 30px;
-  width: auto;
+.navbar-bradesco img{ 
+  height:32px;                       /* Logo pequeno */
 }
 
 .brand-text{
-  color: white;
-  font-weight: 800;
-  font-size: 1.15rem;
-  letter-spacing: .4px;
+  color:white;
+  font-size:1.2rem;
+  font-weight:700;                   /* Deixa a marca mais forte */
 }
 
 
 
-/* ====== Layout ====== */
-.page-wrap{
-  margin-top: 100px;
-  padding-bottom: 48px;
-}
-
-/* ====== Cards ====== */
-.br-card{
-  border-radius: var(--radius);
-  border: 1px solid rgba(17, 24, 39, 0.06);
-  background: rgba(255,255,255,0.9);
-  box-shadow:
-    0 8px 20px rgba(0,0,0,0.06),
-    0 2px 6px rgba(0,0,0,0.04);
-  transition: 
-    transform .22s ease,
-    box-shadow .22s ease,
-    border-color .22s ease;
-}
-
-/* Efeito “salta” ao passar mouse */
-.br-card:hover{
-  transform: translateY(-6px);
-  box-shadow:
-    0 16px 30px rgba(0,0,0,0.10),
-    0 6px 12px rgba(0,0,0,0.06);
-  border-color: rgba(204, 9, 47, 0.35);
-}
-
-/* Login card */
-.login-card{
-  max-width: 430px;
-  animation: fadeUp .35s ease;
-  justify-content: center;
-}
-
-/* ====== Inputs ====== */
-.br-input{
-  border-radius: 12px;
-  border: 1px solid #e5e7eb;
-  padding: 10px 12px;
-  transition: border .2s ease, box-shadow .2s ease;
-}
-
-.br-input:focus{
-  border-color: var(--br-red);
-  box-shadow: 0 0 0 4px var(--br-red-soft);
-  outline: none;
-}
-
-/* ====== Botões ====== */
-.br-btn{
-  background: linear-gradient(180deg, var(--br-red) 0%, #e0003a 100%);
-  color: white;
+/* BOTÃO DE LOGOUT
+   Como a navbar é flex, "margin-left: auto" faz este botão
+   ir totalmente para a direita. */
+#btn-logout{
+  margin-left: auto;  
+  background: transparent;
   border: none;
-  border-radius: 12px;
-  font-weight: 700;
-  padding: 10px 12px;
-  transition: transform .12s ease, filter .2s ease, box-shadow .2s ease;
-  box-shadow: 0 6px 14px rgba(204,9,47,.25);
+  color: white;
+  font-size: 1rem;
+  cursor: pointer;                   /* Mostra mãozinha no hover */
+}
+
+
+
+/* LAYOUT DO CONTEÚDO
+   Define espaçamento e limite de largura da aplicação.*/
+.container-app{
+  margin-top:110px;                 /* Empurra abaixo da navbar */
+  max-width:1050px;                 /* Largura máxima */
+}
+
+
+
+/* CARTÃO DE SALDO
+   Mostra saldo atual do usuário com estilo destacado.*/
+.saldo-card{
+  background: linear-gradient(135deg, var(--br-red), #e0003a);
+  color:white;
+  border-radius:20px;
+  padding:25px;
+}
+
+.saldo-card h1{
+  font-weight:800;                  /* Número do saldo bem forte */
+}
+
+
+
+/* CARTÕES (depósito, saque, transferência, histórico)
+   Padrão usado para todos os blocos no site. */
+.br-card{
+  background:white;
+  padding:18px;
+  border-radius:18px;
+  box-shadow:0 4px 12px rgba(0,0,0,.06);
+  transition:.3s;                    /* Animação suave ao passar o mouse */
+}
+
+.br-card:hover{
+  transform:translateY(-4px);       /* Leve subida */
+  box-shadow:0 10px 26px rgba(0,0,0,.11);
+}
+
+
+
+/*INPUTS DO FORMULÁRIO */
+.br-input{
+  border-radius:10px; /* arredonda a borda*/
+  border:1px solid #ddd;
+}
+
+
+
+/*BOTÕES PADRÃO*/
+.br-btn{
+  background:var(--br-red);
+  color:white;
+  border:none;
+  border-radius:12px;
+  padding:10px;
+  font-weight:600;
 }
 
 .br-btn:hover{
-  filter: brightness(0.98);
-  transform: translateY(-1px);
-  box-shadow: 0 10px 18px rgba(204,9,47,.3);
-  color: white;
+  filter:brightness(.94);
 }
 
-.br-btn:active{
-  transform: translateY(1px);
-}
 
-.br-btn-outline{
-  background: transparent;
-  border: 1.5px solid var(--br-red);
-  color: var(--br-red);
-  border-radius: 12px;
-  font-weight: 700;
-  padding: 8px 12px;
-  transition: all .2s ease;
-}
 
-.br-btn-outline:hover{
-  background: var(--br-red);
-  color: white;
-  transform: translateY(-1px);
-}
-
-/* ====== Header interno ====== */
-.br-header{
-  display: flex;
-  justify-content: space-between;
-  align-items: center;
-  animation: fadeUp .35s ease;
-}
-
-/* ====== Saldo ====== */
-.br-saldo{
-  background:
-    radial-gradient(600px circle at top left, #fff 0, #fff 45%, transparent 70%),
-    white;
-  position: relative;
-  overflow: hidden;
-}
-
-.saldo-pill{
-  background: #fff1f2;
-  color: var(--br-red);
-  border-radius: 999px;
-  padding: 6px 12px;
-  font-size: .8rem;
-  font-weight: 800;
-  letter-spacing: .3px;
-}
-
-/* ====== Listas ====== */
+/* LISTAS (histórico e auditoria)*/
 .list-group-item{
-  border: none !important;
-  padding: 12px 8px;
-  background: transparent;
+  border:none;
+  padding:10px 5px;
 }
 
 .list-group-item + .list-group-item{
-  border-top: 1px dashed #e5e7eb !important;
+  border-top:1px dashed #ddd;       /* Linha entre itens */
 }
 
-/* Auditoria */
-.br-auditoria{
-  border-left: 6px solid var(--br-red);
+
+
+/* AUDITORIA (alertas do Banco Central)
+*/
+.audit-item{
+  color:#b10000;
+  font-weight:600;
 }
 
-#btn-login{
+
+
+/*
+MODAL DE LOGIN
+*/
+.modal-content{
+  border-radius:16px;
+}
+
+.modal-header{
+  background:var(--br-red);
   color:white;
+  border-radius:14px 14px 0 0;
 }
 
-#btn-transferir{
-  color:white;
+
+
+/* 
+RESPONSIVIDADE — CELULAR (até 576px)
+
+   Quando a tela for pequena, vários elementos diminuem
+   para melhorar a usabilidade.
+*/
+@media (max-width: 576px) {
+
+  .container-app{
+    margin-top: 90px;
+    padding: 0 15px;
+  }
+
+  .saldo-card h1{
+    font-size: 1.8rem;
+  }
+
+  .br-card{
+    padding: 15px;
+  }
+
+  .br-input{
+    font-size: 1.1rem;
+    padding: 12px;
+  }
+
+  .br-btn{
+    padding: 14px;
+    font-size: 1.1rem;
+  }
+
+  .list-group-item{
+    font-size: .95rem;
+  }
+
+  .navbar-bradesco{
+    height: 60px;
+  }
 }
 
-#btn-sacar{
-  color:white;
-}
 
-#btn-depositar{
-  color:white;
-}
 
-/* ====== Animações ====== */
-@keyframes fadeUp{
-  from { opacity: 0; transform: translateY(8px); }
-  to   { opacity: 1; transform: translateY(0); }
+/*
+ TABLET (577px até 992px)
+ */
+@media (min-width: 577px) and (max-width: 992px) {
+
+  .container-app{
+    margin-top: 100px;
+    max-width: 850px;
+  }
+
+  .br-card{
+    padding: 20px;
+  }
+
+  .br-input{
+    padding: 10px;
+  }
+
+  .br-btn{
+    padding: 12px;
+  }
+
+  .saldo-card h1{
+    font-size: 2.2rem;
+  }
 }
