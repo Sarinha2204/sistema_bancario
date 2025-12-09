@@ -1,0 +1,195 @@
+:root{
+  --br-red: #cc092f;
+  --br-red-dark: #a70726;
+  --br-red-soft: rgba(204, 9, 47, 0.12);
+  --br-gray: #f3f4f6;
+  --br-text: #111827;
+  --br-muted: #6b7280;
+  --radius: 18px;
+}
+
+/* ====== Fundo geral elegante ====== */
+.body{
+  background-color: grey;
+  color: var(--br-text);
+  min-height: 100vh;
+}
+
+/* ====== Topbar Bradesco ====== */
+.navbar-bradesco{
+  background: linear-gradient(90deg, var(--br-red) 0%, #e0003a 100%);
+  height: 68px;
+  display: flex;
+  align-items: center;
+  box-shadow: 0 6px 18px rgba(0,0,0,.18);
+  z-index: 10;
+  backdrop-filter: blur(6px);
+}
+
+.logo-bradesco{
+  height: 30px;
+  width: auto;
+}
+
+.brand-text{
+  color: white;
+  font-weight: 800;
+  font-size: 1.15rem;
+  letter-spacing: .4px;
+}
+
+
+
+/* ====== Layout ====== */
+.page-wrap{
+  margin-top: 100px;
+  padding-bottom: 48px;
+}
+
+/* ====== Cards ====== */
+.br-card{
+  border-radius: var(--radius);
+  border: 1px solid rgba(17, 24, 39, 0.06);
+  background: rgba(255,255,255,0.9);
+  box-shadow:
+    0 8px 20px rgba(0,0,0,0.06),
+    0 2px 6px rgba(0,0,0,0.04);
+  transition: 
+    transform .22s ease,
+    box-shadow .22s ease,
+    border-color .22s ease;
+}
+
+/* Efeito “salta” ao passar mouse */
+.br-card:hover{
+  transform: translateY(-6px);
+  box-shadow:
+    0 16px 30px rgba(0,0,0,0.10),
+    0 6px 12px rgba(0,0,0,0.06);
+  border-color: rgba(204, 9, 47, 0.35);
+}
+
+/* Login card */
+.login-card{
+  max-width: 430px;
+  animation: fadeUp .35s ease;
+  justify-content: center;
+}
+
+/* ====== Inputs ====== */
+.br-input{
+  border-radius: 12px;
+  border: 1px solid #e5e7eb;
+  padding: 10px 12px;
+  transition: border .2s ease, box-shadow .2s ease;
+}
+
+.br-input:focus{
+  border-color: var(--br-red);
+  box-shadow: 0 0 0 4px var(--br-red-soft);
+  outline: none;
+}
+
+/* ====== Botões ====== */
+.br-btn{
+  background: linear-gradient(180deg, var(--br-red) 0%, #e0003a 100%);
+  color: white;
+  border: none;
+  border-radius: 12px;
+  font-weight: 700;
+  padding: 10px 12px;
+  transition: transform .12s ease, filter .2s ease, box-shadow .2s ease;
+  box-shadow: 0 6px 14px rgba(204,9,47,.25);
+}
+
+.br-btn:hover{
+  filter: brightness(0.98);
+  transform: translateY(-1px);
+  box-shadow: 0 10px 18px rgba(204,9,47,.3);
+  color: white;
+}
+
+.br-btn:active{
+  transform: translateY(1px);
+}
+
+.br-btn-outline{
+  background: transparent;
+  border: 1.5px solid var(--br-red);
+  color: var(--br-red);
+  border-radius: 12px;
+  font-weight: 700;
+  padding: 8px 12px;
+  transition: all .2s ease;
+}
+
+.br-btn-outline:hover{
+  background: var(--br-red);
+  color: white;
+  transform: translateY(-1px);
+}
+
+/* ====== Header interno ====== */
+.br-header{
+  display: flex;
+  justify-content: space-between;
+  align-items: center;
+  animation: fadeUp .35s ease;
+}
+
+/* ====== Saldo ====== */
+.br-saldo{
+  background:
+    radial-gradient(600px circle at top left, #fff 0, #fff 45%, transparent 70%),
+    white;
+  position: relative;
+  overflow: hidden;
+}
+
+.saldo-pill{
+  background: #fff1f2;
+  color: var(--br-red);
+  border-radius: 999px;
+  padding: 6px 12px;
+  font-size: .8rem;
+  font-weight: 800;
+  letter-spacing: .3px;
+}
+
+/* ====== Listas ====== */
+.list-group-item{
+  border: none !important;
+  padding: 12px 8px;
+  background: transparent;
+}
+
+.list-group-item + .list-group-item{
+  border-top: 1px dashed #e5e7eb !important;
+}
+
+/* Auditoria */
+.br-auditoria{
+  border-left: 6px solid var(--br-red);
+}
+
+#btn-login{
+  color:white;
+}
+
+#btn-transferir{
+  color:white;
+}
+
+#btn-sacar{
+  color:white;
+}
+
+#btn-depositar{
+  color:white;
+}
+
+/* ====== Animações ====== */
+@keyframes fadeUp{
+  from { opacity: 0; transform: translateY(8px); }
+  to   { opacity: 1; transform: translateY(0); }
+}
